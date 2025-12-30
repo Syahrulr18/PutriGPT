@@ -6,6 +6,8 @@ const hf = new HfInference(import.meta.env.VITE_HF_TOKEN);
 export function useMathSolver() {
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [textInput, setTextInput] = useState('');
+    const [answerMode, setAnswerMode] = useState('verbose'); // 'verbose' | 'concise'
     const [solution, setSolution] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -50,7 +52,7 @@ export function useMathSolver() {
     const clearImage = () => {
         setImage(null);
         setImagePreview(null);
-        setSolution('');
+        if (!textInput) setSolution(''); // Only clear solution if no text input either
         setError('');
     };
 
@@ -64,8 +66,8 @@ export function useMathSolver() {
 
     // Solve math problem
     const solveMath = async () => {
-        if (!image) {
-            setError('Silakan upload gambar soal matematika terlebih dahulu');
+        if (!image && !textInput.trim()) {
+            setError('Silakan upload gambar atau tulis soal matematika terlebih dahulu');
             return;
         }
 
@@ -74,10 +76,13 @@ export function useMathSolver() {
         setSolution('');
 
         try {
-            const base64Image = await convertToBase64(image);
+            let userContent = [];
 
-            const prompt = `Kamu adalah tutor matematika ahli. Analisis gambar soal matematika ini dan berikan solusi lengkap.
+            // Add text instruction based on mode
+            let systemPrompt = `Kamu adalah tutor matematika ahli.`;
 
+            if (answerMode === 'verbose') {
+                systemPrompt += ` Analisis soal ini dan berikan solusi lengkap.
 INSTRUKSI:
 1. Identifikasi jenis soal matematika pada gambar
 2. Jelaskan langkah demi langkah penyelesaiannya dalam Bahasa Indonesia
@@ -86,24 +91,50 @@ INSTRUKSI:
 5. Tampilkan jawaban akhir dengan jelas
 
 Mulai analisis dan penyelesaian soal:`;
+            } else {
+                systemPrompt += ` Analisis soal ini dan berikan jawabannya.
+
+INSTRUKSI KHUSUS (ZERO VERBOSITY / SILENT MODE):
+1. **DILARANG KERAS** menggunakan kata-kata sapaan, pengantar, atau kalimat penjelas (seperti "Kita substitusikan...", "Maka hasilnya adalah...").
+2. **HANYA OUTPUTKAN** label langkah (contoh: "Diketahui:", "Langkah 1:", "Langkah 2:") diikuti langsung oleh persamaan matematika.
+3. **WAJIB LATEX**: Tulis semua angka dan rumus dalam format LaTeX (contoh: $x^2$ atau $$\\frac{1}{2}$$).
+4. **FORMAT**:
+   Diketahui: [Data] \n
+   Ditanya: [Variabel] \n
+   Penyelesaian: \n
+   [Rumus/Perhitungan Langsung tanpa penjelasan] \n
+   Jawaban Akhir: [Hasil]
+
+Mulai (langsung hitungan)`;
+            }
+
+            // Add text input if exists
+            if (textInput.trim()) {
+                systemPrompt += `\n\nSOAL TAMBAHAN DARI USER: ${textInput}`;
+            }
+
+            userContent.push({
+                type: "text",
+                text: systemPrompt
+            });
+
+            // Add image if exists
+            if (image) {
+                const base64Image = await convertToBase64(image);
+                userContent.push({
+                    type: "image_url",
+                    image_url: {
+                        url: base64Image
+                    }
+                });
+            }
 
             const response = await hf.chatCompletion({
                 model: "Qwen/Qwen2.5-VL-7B-Instruct",
                 messages: [
                     {
                         role: "user",
-                        content: [
-                            {
-                                type: "text",
-                                text: prompt
-                            },
-                            {
-                                type: "image_url",
-                                image_url: {
-                                    url: base64Image
-                                }
-                            }
-                        ]
+                        content: userContent
                     }
                 ],
                 max_tokens: 2048
@@ -114,7 +145,7 @@ Mulai analisis dan penyelesaian soal:`;
             if (answer) {
                 setSolution(answer);
             } else {
-                setError('Tidak dapat memproses gambar. Silakan coba lagi dengan gambar yang lebih jelas.');
+                setError('Tidak dapat memproses permintaan. Silakan coba lagi.');
             }
         } catch (err) {
             console.error('API Error:', err);
@@ -125,7 +156,7 @@ Mulai analisis dan penyelesaian soal:`;
             } else if (err.message?.includes('503')) {
                 setError('Model sedang loading. Silakan tunggu 20-30 detik dan coba lagi.');
             } else {
-                setError(`Terjadi kesalahan: ${err.message || 'Gagal memproses gambar'}`);
+                setError(`Terjadi kesalahan: ${err.message || 'Gagal memproses'}`);
             }
         } finally {
             setLoading(false);
@@ -135,6 +166,10 @@ Mulai analisis dan penyelesaian soal:`;
     return {
         image,
         imagePreview,
+        textInput,
+        setTextInput,
+        answerMode,
+        setAnswerMode,
         solution,
         loading,
         error,

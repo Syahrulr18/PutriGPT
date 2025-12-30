@@ -7,6 +7,10 @@ function App() {
   const {
     image,
     imagePreview,
+    textInput,
+    setTextInput,
+    answerMode,
+    setAnswerMode,
     solution,
     loading,
     error,
@@ -32,6 +36,10 @@ function App() {
             onClearImage={clearImage}
             onSolve={solveMath}
             hasImage={!!image}
+            textInput={textInput}
+            setTextInput={setTextInput}
+            answerMode={answerMode}
+            setAnswerMode={setAnswerMode}
           />
 
           <SolutionSection 

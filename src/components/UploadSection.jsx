@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, ImageIcon, Trash2, Sparkles, Loader2, AlertCircle, Lightbulb, Camera } from 'lucide-react';
+import { Upload, ImageIcon, Trash2, Sparkles, Loader2, AlertCircle, Lightbulb, Camera, AlignLeft, ListOrdered } from 'lucide-react';
 import CameraModal from './CameraModal';
 
 function UploadSection({ 
@@ -10,7 +10,11 @@ function UploadSection({
   onClearImage, 
   onSolve,
   hasImage,
-  onCameraCapture
+  onCameraCapture,
+  textInput,
+  setTextInput,
+  answerMode,
+  setAnswerMode
 }) {
   const fileInputRef = useRef(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -38,7 +42,7 @@ function UploadSection({
       <div className="bg-white rounded-2xl border border-blue-100 shadow-lg p-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <ImageIcon className="w-5 h-5 text-blue-500" />
-          Upload Soal Matematika
+          Input Soal Matematika
         </h2>
 
         {/* Input Method Buttons */}
@@ -60,34 +64,27 @@ function UploadSection({
         </div>
 
         {/* Preview / Drop Zone */}
-        <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onClick={() => !imagePreview && fileInputRef.current?.click()}
-          className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
-            imagePreview
-              ? 'border-blue-500 bg-blue-50 cursor-default'
-              : 'border-blue-200 hover:border-blue-400 hover:bg-blue-50/50 cursor-pointer'
-          }`}
-        >
-          {imagePreview ? (
-            <div className="relative">
-              <img
-                src={imagePreview}
-                alt="Preview soal"
-                className="max-h-64 mx-auto rounded-lg shadow-md"
-              />
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onClearImage();
-                }}
-                className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors shadow-lg"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
+        {imagePreview ? (
+          <div className="relative border-2 border-blue-500 bg-blue-50 rounded-xl p-4 mb-4">
+            <img
+              src={imagePreview}
+              alt="Preview soal"
+              className="max-h-64 mx-auto rounded-lg shadow-md"
+            />
+            <button
+              onClick={onClearImage}
+              className="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors shadow-lg"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <div
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onClick={() => fileInputRef.current?.click()}
+            className="border-2 border-dashed border-blue-200 hover:border-blue-400 hover:bg-blue-50/50 rounded-xl p-8 text-center cursor-pointer transition-all duration-300 mb-4"
+          >
             <div className="space-y-4">
               <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
                 <ImageIcon className="w-8 h-8 text-blue-500" />
@@ -101,22 +98,66 @@ function UploadSection({
                 </p>
               </div>
             </div>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={onImageUpload}
-            className="hidden"
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={onImageUpload}
+              className="hidden"
+            />
+          </div>
+        )}
+
+        {/* Text Area for Manual Input */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Atau ketik soal di sini:
+          </label>
+          <textarea
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            placeholder="Contoh: Hitung integral dari 2x^2 + 5x..."
+            className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px] resize-y text-gray-800"
           />
+        </div>
+
+        {/* Answer Mode Selection */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Mode Jawaban:
+          </label>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setAnswerMode('verbose')}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
+                answerMode === 'verbose'
+                  ? 'border-blue-500 bg-blue-500 text-white'
+                  : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <AlignLeft className="w-5 h-5" />
+              Lengkap (Penjelasan)
+            </button>
+            <button
+              onClick={() => setAnswerMode('concise')}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
+                answerMode === 'concise'
+                  ? 'border-blue-500 bg-blue-500 text-white'
+                  : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <ListOrdered className="w-5 h-5" />
+              Ringkas (Langkah Saja)
+            </button>
+          </div>
         </div>
 
         {/* Solve Button */}
         <button
           onClick={onSolve}
-          disabled={!hasImage || loading}
-          className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 transition-all duration-300 ${
-            !hasImage || loading
+          disabled={(!hasImage && !textInput.trim()) || loading}
+          className={`w-full py-4 px-6 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 transition-all duration-300 ${
+            (!hasImage && !textInput.trim()) || loading
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50'
           }`}
@@ -150,8 +191,8 @@ function UploadSection({
         </h3>
         <ul className="space-y-2 text-sm text-gray-600">
           <li>• Pastikan gambar soal jelas dan tidak blur</li>
-          <li>• Foto dalam pencahayaan yang cukup</li>
-          <li>• Satu gambar untuk satu soal lebih baik</li>
+          <li>• Anda bisa mengetik soal jika gambar kurang jelas</li>
+          <li>• Gunakan mode "Ringkas" jika ingin jawaban cepat tanpa narasi</li>
           <li>• Gunakan kamera belakang HP untuk hasil terbaik</li>
         </ul>
       </div>
