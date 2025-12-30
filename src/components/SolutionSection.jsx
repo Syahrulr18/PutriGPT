@@ -8,7 +8,7 @@ function SolutionSection({ loading, solution }) {
     <div className="bg-white rounded-2xl border border-blue-100 shadow-lg p-6 min-h-[500px]">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <Sparkles className="w-5 h-5 text-blue-500" />
-        Solusi
+        Disini Jawabannya Bos
       </h2>
 
       {loading ? (
@@ -68,7 +68,7 @@ function SolutionSection({ loading, solution }) {
             <ImageIcon className="w-10 h-10 text-blue-300" />
           </div>
           <div>
-            <p className="text-gray-500 font-medium">Belum ada solusi</p>
+            <p className="text-gray-500 font-medium">Sabarnah Bos</p>
             <p className="text-sm text-gray-400 mt-1">
               Upload gambar soal matematika dan klik "Selesaikan Soal"
             </p>
