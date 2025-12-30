@@ -1,16 +1,64 @@
-# React + Vite
+# 🐱 PutriGPT - AI Math Solver
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**PutriGPT** (a.k.a *"Sini Ku Kerjakanko"*) adalah aplikasi web cerdas yang dapat menyelesaikan soal matematika hanya dengan mengupload foto atau mengambil gambar langsung dari kamera. Ditenagai oleh **Qwen2.5-VL** (Vision-Language Model), aplikasi ini memberikan penjelasan langkah demi langkah dalam Bahasa Indonesia yang mudah dipahami.
 
-Currently, two official plugins are available:
+![PutriGPT Preview](https://placehold.co/1200x600/e0f2fe/1e40af?text=PutriGPT+Preview)
+*(Ganti gambar ini dengan screenshot aplikasi aslimu nanti)*
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Fitur Utama
 
-## React Compiler
+- 📸 **Dual Input Mode**: Upload file gambar atau ambil foto langsung menggunakan kamera (support kamera depan/belakang).
+- 🧠 **AI Power**: Menggunakan model `Qwen/Qwen2.5-VL-7B-Instruct` via Hugging Face Inference API.
+- 📝 **LaTeX Rendering**: Rumus matematika ditampilkan dengan rapi menggunakan KaTeX.
+- 🇮🇩 **Bahasa Indonesia**: Penjelasan solusi lengkap dalam Bahasa Indonesia.
+- 🎨 **Modern UI**: Desain bersih dengan tema putih-biru dan glassmorphism.
+- 📱 **Responsive**: Tampilan optimal di desktop maupun mobile.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend**: React + Vite
+- **Styling**: Tailwind CSS
+- **AI Integration**: Hugging Face Inference (`@huggingface/inference`)
+- **Math Rendering**: React Markdown, Remark Math, Rehype Katex
+- **Icons**: Lucide React
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Cara Menjalankan Project
+
+Ikuti langkah-langkah ini untuk menjalankan project di lokal komputer kamu:
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/Syahrulr18/PutriGPT.git
+cd PutriGPT
+```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+### 3. Konfigurasi Environment Variable
+Buat file `.env` di root folder project, lalu copy isi dari `.env.example` atau tambahkan baris berikut:
+
+```env
+VITE_HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxx
+```
+> **Catatan:** Anda bisa mendapatkan token gratis di [Hugging Face Settings](https://huggingface.co/settings/tokens). Pastikan token memiliki izin `Read`.
+
+### 4. Jalankan Aplikasi
+```bash
+npm run dev
+```
+Buka browser dan kunjungi `http://localhost:5173`.
+
+## 📦 Build untuk Production
+
+Untuk mendeploy aplikasi (misalnya ke Netlify/Vercel):
+
+```bash
+npm run build
+```
+
+---
+
+Built with 🐱 by **PutriJago**
