@@ -136,7 +136,7 @@ function UploadSection({
               }`}
             >
               <AlignLeft className="w-5 h-5" />
-              Lengkap (Penjelasan)
+              Lengkap
             </button>
             <button
               onClick={() => setAnswerMode('concise')}
@@ -147,7 +147,7 @@ function UploadSection({
               }`}
             >
               <ListOrdered className="w-5 h-5" />
-              Ringkas (Langkah Saja)
+              Ringkas
             </button>
           </div>
         </div>
