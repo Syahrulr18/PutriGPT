@@ -4,6 +4,21 @@ import rehypeKatex from 'rehype-katex';
 import { Sparkles, ImageIcon } from 'lucide-react';
 
 function SolutionSection({ loading, solution }) {
+  // Preprocess LaTeX to ensure consistent rendering
+  const preprocessLaTeX = (content) => {
+    if (!content) return '';
+    return content
+      // Replace \[ ... \] with $$ ... $$
+      .replace(/\\\[([\s\S]*?)\\\]/g, '$$$1$$')
+      // Replace \( ... \) with $ ... $
+      .replace(/\\\(([\s\S]*?)\\\)/g, '$$$1$$')
+      // Ensure align environments are wrapped in $$ if not already
+      .replace(/(\\begin\{align\*?\}[\s\S]*?\\end\{align\*?\})/g, (match) => {
+        if (match.trim().startsWith('$$') || match.trim().startsWith('\\[')) return match;
+        return `$$${match}$$`;
+      });
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-blue-100 shadow-lg p-6 min-h-[500px]">
       <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -52,14 +67,14 @@ function SolutionSection({ loading, solution }) {
               ),
               code: ({ node, inline, ...props }) => (
                 inline ? (
-                  <code className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded" {...props} />
+                  <code className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-sm font-mono" {...props} />
                 ) : (
-                  <code className="block bg-gray-100 p-4 rounded-lg overflow-x-auto text-gray-800" {...props} />
+                  <code className="block bg-gray-100 p-4 rounded-lg overflow-x-auto text-gray-800 text-sm font-mono" {...props} />
                 )
               ),
             }}
           >
-            {solution}
+            {preprocessLaTeX(solution)}
           </ReactMarkdown>
         </div>
       ) : (

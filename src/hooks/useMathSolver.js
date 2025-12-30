@@ -81,31 +81,38 @@ export function useMathSolver() {
             // Add text instruction based on mode
             let systemPrompt = `Kamu adalah tutor matematika ahli.`;
 
+            // CHAIN OF THOUGHT PROMPTING FOR BETTER ACCURACY
             if (answerMode === 'verbose') {
-                systemPrompt += ` Analisis soal ini dan berikan solusi lengkap.
-INSTRUKSI:
-1. Identifikasi jenis soal matematika pada gambar
-2. Jelaskan langkah demi langkah penyelesaiannya dalam Bahasa Indonesia
-3. Tulis semua rumus dan persamaan matematika menggunakan format LaTeX (contoh: $x^2 + 2x + 1 = 0$ atau $$\\frac{a}{b}$$)
-4. Berikan penjelasan yang mudah dipahami untuk setiap langkah
-5. Tampilkan jawaban akhir dengan jelas
+                systemPrompt += ` Analisis soal ini dengan sangat teliti dan berikan solusi lengkap.
 
-Mulai analisis dan penyelesaian soal:`;
+PERINGATAN:
+- Jangan membuat asumsi yang salah. Perhatikan setiap pangkat, tanda negatif, dan konstanta.
+- Untuk Persamaan Diferensial, HATI-HATI saat mencari akar karakteristik (faktorkan dengan teliti) dan koefisien Undetermined Coefficients.
+- Pastikan setiap langkah logis dan terhubung.
+
+INSTRUKSI OUTPUT:
+1. Identifikasi jenis soal (misal: PD Linear Non-Homogen Orde 3).
+2. Tuliskan Diketahui dan Ditanya dengan jelas.
+3. Jelaskan langkah penyelesaian step-by-step dalam Bahasa Indonesia.
+   - VERIFIKASI setiap langkah perhitungan aritmatika (misal: turunan, integral, faktorisasi).
+4. Tulis rumus matematika dengan LaTeX ($...$ atau $$...$$).
+5. Konfirmasi jawaban akhir.`;
             } else {
-                systemPrompt += ` Analisis soal ini dan berikan jawabannya.
+                systemPrompt += ` Selesaikan soal ini dengan akurasi 100%.
 
-INSTRUKSI KHUSUS (ZERO VERBOSITY / SILENT MODE):
-1. **DILARANG KERAS** menggunakan kata-kata sapaan, pengantar, atau kalimat penjelas (seperti "Kita substitusikan...", "Maka hasilnya adalah...").
-2. **HANYA OUTPUTKAN** label langkah (contoh: "Diketahui:", "Langkah 1:", "Langkah 2:") diikuti langsung oleh persamaan matematika.
-3. **WAJIB LATEX**: Tulis semua angka dan rumus dalam format LaTeX (contoh: $x^2$ atau $$\\frac{1}{2}$$).
-4. **FORMAT**:
-   Diketahui: [Data] \n
-   Ditanya: [Variabel] \n
-   Penyelesaian: \n
-   [Rumus/Perhitungan Langsung tanpa penjelasan] \n
-   Jawaban Akhir: [Hasil]
+INSTRUKSI KHUSUS (Step-by-Step Math Only):
+1. Fokus pada KETEPATAN perhitungan. Jangan skip langkah penting.
+2. Tampilkan HANYA langkah-langkah matematika (penurunan rumus/substitusi).
+3. Minimalkan teks narasi. Gunakan label singkat saja (misal "Mencari akar karakteristik r:" atau "Solusi partikular yp:").
+4. WAJIB menggunakan format LaTeX untuk semua notasi matematika.
+5. Struktur output:
+   - Diketahui
+   - Langkah 1 (Perhitungan)
+   - Langkah 2 (Perhitungan)
+   - ...
+   - Jawaban Akhir (Boxed/Bold)
 
-Mulai (langsung hitungan)`;
+Pastikan hasil akhirnya benar secara matematis.`;
             }
 
             // Add text input if exists
