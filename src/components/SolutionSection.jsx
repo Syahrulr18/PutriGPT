@@ -68,7 +68,7 @@ function SolutionSection({ loading, solution }) {
             <ImageIcon className="w-10 h-10 text-blue-300" />
           </div>
           <div>
-            <p className="text-gray-500 font-medium">Sabarnah Bos</p>
+            <p className="text-gray-500 font-medium">Sabar nah</p>
             <p className="text-sm text-gray-400 mt-1">
               Upload gambar soal matematika dan klik "Selesaikan Soal"
             </p>
