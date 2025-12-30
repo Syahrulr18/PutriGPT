@@ -17,7 +17,7 @@ function SolutionSection({ loading, solution }) {
             <div className="w-16 h-16 border-4 border-blue-200 rounded-full"></div>
             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin absolute top-0"></div>
           </div>
-          <p className="text-gray-600">AI sedang menganalisis soal...</p>
+          <p className="text-gray-600">PutriGPT sedang menganalisis soal...</p>
           <p className="text-sm text-gray-400">Proses ini membutuhkan beberapa detik</p>
         </div>
       ) : solution ? (
